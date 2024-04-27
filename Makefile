@@ -31,6 +31,9 @@ help: ## Show this help screen.
 status: ## Show containers status
 	@docker compose ps
 
+build: ## Build the project
+	@-$(DOCKER_COMPOSE) up --build -d
+
 start: ## Starts the containers
 	@-$(DOCKER_COMPOSE) up -d --remove-orphans
 
