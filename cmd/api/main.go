@@ -1,7 +1,7 @@
 package main
 
 import (
-	"go_test/cmd/api/bootstrap"
+	"hexagonal-go-kata/cmd/api/bootstrap"
 	"log"
 )
 
