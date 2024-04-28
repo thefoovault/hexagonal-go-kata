@@ -8,3 +8,13 @@ services:
       - "8080:8080"
     volumes:
       - ../src:/src
+  hexagonal-go-kata-mysql:
+    image: mysql:8.0.22
+    volumes:
+      - ./var/MySQL:/var/lib/mysql
+      - ./docker/MySql/sql/:/docker-entrypoint-initdb.d
+    environment:
+      MYSQL_DATABASE: hexagonalGoKata
+      MYSQL_USER: hexagonalGoKata
+      MYSQL_PASSWORD: hexagonalGoKata
+      MYSQL_ROOT_PASSWORD: hexagonalGoKata
