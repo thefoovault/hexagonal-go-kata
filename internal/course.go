@@ -22,6 +22,8 @@ type CourseRepository interface {
 	Save(ctx context.Context, course Course) error
 }
 
+//go:generate mockery --case=snake --outpkg=storagemocks --output=platform/storage/storagemocks --name=CourseRepository
+
 func (c Course) Id() string {
 	return c.id
 }
