@@ -21,11 +21,21 @@ func TestHandler_Create(t *testing.T) {
 		wantErr         bool
 	}{
 		{
-			name:           `given an invalid request it returns 400`,
+			name:           `given a payload with missing fields request it returns 400`,
 			expectedStatus: http.StatusBadRequest,
 			createCourseReq: createRequest{
 				Id:   "8a1c5cdc-ba57-445a-994d-aa412d23723f",
 				Name: "Demo Course",
+			},
+			wantErr: true,
+		},
+		{
+			name:           `given another payload with invalid fields it returns 400`,
+			expectedStatus: http.StatusBadRequest,
+			createCourseReq: createRequest{
+				Id:       "invalid uuid",
+				Name:     "Demo Course",
+				Duration: "10 minutes",
 			},
 			wantErr: true,
 		},

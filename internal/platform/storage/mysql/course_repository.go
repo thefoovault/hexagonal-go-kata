@@ -24,9 +24,9 @@ func NewCourseRepository(db *sql.DB) *CourseRepository {
 func (r *CourseRepository) Save(context context.Context, course mooc.Course) error {
 	courseSQLStruct := sqlbuilder.NewStruct(new(sqlCourse))
 	query, args := courseSQLStruct.InsertInto(sqlCourseTable, sqlCourse{
-		Id:       course.Id(),
-		Name:     course.Name(),
-		Duration: course.Duration(),
+		Id:       course.Id().String(),
+		Name:     course.Name().String(),
+		Duration: course.Duration().String(),
 	}).Build()
 
 	_, err := r.db.ExecContext(context, query, args...)
