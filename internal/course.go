@@ -3,7 +3,6 @@ package mooc
 import (
 	"context"
 	"errors"
-	"fmt"
 	"github.com/google/uuid"
 )
 
@@ -16,8 +15,9 @@ type CourseId struct {
 func NewCourseId(value string) (CourseId, error) {
 	id, err := uuid.Parse(value)
 	if err != nil {
-		return CourseId{}, fmt.Errorf("%s, %s", ErrInvalidCourseId, value)
+		return CourseId{}, ErrInvalidCourseId
 	}
+
 	return CourseId{
 		value: id.String(),
 	}, nil
@@ -37,6 +37,7 @@ func NewCourseName(value string) (CourseName, error) {
 	if value == "" {
 		return CourseName{}, ErrEmptyCourseName
 	}
+
 	return CourseName{
 		value: value,
 	}, nil
@@ -56,6 +57,7 @@ func NewCourseDuration(value string) (CourseDuration, error) {
 	if value == "" {
 		return CourseDuration{}, ErrEmptyCourseDuration
 	}
+
 	return CourseDuration{
 		value: value,
 	}, nil

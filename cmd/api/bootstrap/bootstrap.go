@@ -3,6 +3,7 @@ package bootstrap
 import (
 	"database/sql"
 	"fmt"
+	"hexagonal-go-kata/internal/creating"
 	"hexagonal-go-kata/internal/platform/server"
 	"hexagonal-go-kata/internal/platform/storage/mysql"
 
@@ -29,6 +30,8 @@ func Run() error {
 
 	courseRepository := mysql.NewCourseRepository(db)
 
-	srv := server.New(host, port, courseRepository)
+	creatingCourseService := creating.NewCourseService(courseRepository)
+
+	srv := server.New(host, port, creatingCourseService)
 	return srv.Run()
 }

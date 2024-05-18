@@ -7,6 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"hexagonal-go-kata/internal/creating"
 	"hexagonal-go-kata/internal/platform/storage/storagemocks"
 	"net/http"
 	"net/http/httptest"
@@ -53,9 +54,11 @@ func TestHandler_Create(t *testing.T) {
 	courseRepository := new(storagemocks.CourseRepository)
 	courseRepository.On("Save", mock.Anything, mock.AnythingOfType("mooc.Course")).Return(nil)
 
+	creatingCourseService := creating.NewCourseService(courseRepository)
+
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	r.POST("/courses", CreateHandler(courseRepository))
+	r.POST("/courses", CreateHandler(creatingCourseService))
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
