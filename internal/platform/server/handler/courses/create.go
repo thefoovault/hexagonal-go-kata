@@ -5,6 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 	mooc "hexagonal-go-kata/internal"
 	"hexagonal-go-kata/internal/creating"
+	"hexagonal-go-kata/kit/command"
 	"net/http"
 )
 
@@ -16,7 +17,7 @@ type createRequest struct {
 }
 
 // CreateHandler returns an HTTP handler for courses creation
-func CreateHandler(creatingCourseService creating.CourseService) gin.HandlerFunc {
+func CreateHandler(CommandBus command.Bus) gin.HandlerFunc {
 	return func(context *gin.Context) {
 		var req createRequest
 		if err := context.BindJSON(&req); err != nil {
@@ -24,7 +25,11 @@ func CreateHandler(creatingCourseService creating.CourseService) gin.HandlerFunc
 			return
 		}
 
-		err := creatingCourseService.CreateCourse(context, req.Id, req.Name, req.Duration)
+		err := CommandBus.Dispatch(context, creating.NewCourseCommand(
+			req.Id,
+			req.Name,
+			req.Duration,
+		))
 
 		if err != nil {
 			switch {

@@ -3,23 +3,24 @@ package server
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"hexagonal-go-kata/internal/creating"
 	"hexagonal-go-kata/internal/platform/server/handler/courses"
 	"hexagonal-go-kata/internal/platform/server/handler/health"
+	"hexagonal-go-kata/kit/command"
 	"log"
 )
 
 type Server struct {
-	httpAddress           string
-	engine                *gin.Engine
-	creatingCourseService creating.CourseService
+	httpAddress string
+	engine      *gin.Engine
+	//dependencies
+	commandBus command.Bus
 }
 
-func New(host string, port uint, creatingCourseService creating.CourseService) Server {
+func New(host string, port uint, command command.Bus) Server {
 	srv := Server{
-		engine:                gin.New(),
-		httpAddress:           fmt.Sprintf("%s:%d", host, port),
-		creatingCourseService: creatingCourseService,
+		engine:      gin.New(),
+		httpAddress: fmt.Sprintf("%s:%d", host, port),
+		commandBus:  command,
 	}
 
 	srv.registerRoutes()
@@ -33,5 +34,5 @@ func (s *Server) Run() error {
 
 func (s *Server) registerRoutes() {
 	s.engine.GET("/health", health.CheckHandler())
-	s.engine.POST("/course", courses.CreateHandler(s.creatingCourseService))
+	s.engine.POST("/course", courses.CreateHandler(s.commandBus))
 }

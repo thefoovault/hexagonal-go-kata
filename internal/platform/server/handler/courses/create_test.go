@@ -7,8 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"hexagonal-go-kata/internal/creating"
-	"hexagonal-go-kata/internal/platform/storage/storagemocks"
+	"hexagonal-go-kata/kit/command/commandmocks"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -31,16 +30,6 @@ func TestHandler_Create(t *testing.T) {
 			wantErr: true,
 		},
 		{
-			name:           `given another payload with invalid fields it returns 400`,
-			expectedStatus: http.StatusBadRequest,
-			createCourseReq: createRequest{
-				Id:       "invalid uuid",
-				Name:     "Demo Course",
-				Duration: "10 minutes",
-			},
-			wantErr: true,
-		},
-		{
 			name:           `given a valid request it returns 201`,
 			expectedStatus: http.StatusCreated,
 			createCourseReq: createRequest{
@@ -51,14 +40,16 @@ func TestHandler_Create(t *testing.T) {
 			wantErr: true,
 		},
 	}
-	courseRepository := new(storagemocks.CourseRepository)
-	courseRepository.On("Save", mock.Anything, mock.AnythingOfType("mooc.Course")).Return(nil)
-
-	creatingCourseService := creating.NewCourseService(courseRepository)
+	commandBus := new(commandmocks.Bus)
+	commandBus.On(
+		"Dispatch",
+		mock.Anything,
+		mock.AnythingOfType("creating.CourseCommand"),
+	).Return(nil)
 
 	gin.SetMode(gin.TestMode)
 	r := gin.New()
-	r.POST("/courses", CreateHandler(creatingCourseService))
+	r.POST("/courses", CreateHandler(commandBus))
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

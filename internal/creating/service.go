@@ -15,11 +15,11 @@ func NewCourseService(courseRepository mooc.CourseRepository) CourseService {
 	}
 }
 
-func (s CourseService) CreateCourse(ctxt context.Context, id, name, duration string) error {
+func (s CourseService) CreateCourse(context context.Context, id, name, duration string) error {
 	course, err := mooc.NewCourse(id, name, duration)
 	if err != nil {
 		return err
 	}
 
-	return s.courseRepository.Save(ctxt, course)
+	return s.courseRepository.Save(context, course)
 }
