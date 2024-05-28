@@ -1,19 +1,22 @@
 package bootstrap
 
 import (
+	"context"
 	"database/sql"
 	"fmt"
 	"hexagonal-go-kata/internal/creating"
 	"hexagonal-go-kata/internal/platform/bus/inmemory"
 	"hexagonal-go-kata/internal/platform/server"
 	"hexagonal-go-kata/internal/platform/storage/mysql"
+	"time"
 
 	_ "github.com/go-sql-driver/mysql"
 )
 
 const (
-	host = "0.0.0.0"
-	port = 8080
+	host            = "0.0.0.0"
+	port            = 8080
+	shutdownTimeout = 10 * time.Second
 
 	dbUser = "hexagonalGoKata"
 	dbPass = "hexagonalGoKata"
@@ -40,6 +43,6 @@ func Run() error {
 	createCourseCommandHandler := creating.NewCourseCommandHandler(creatingCourseService)
 	commandBus.Register(creating.CourseCommandType, createCourseCommandHandler)
 
-	srv := server.New(host, port, commandBus)
-	return srv.Run()
+	ctx, srv := server.New(context.Background(), host, port, shutdownTimeout, commandBus)
+	return srv.Run(ctx)
 }
